@@ -19,7 +19,7 @@ function plot_trajectory_with_sonar()
     xPoints = cellfun(@(m) double(m.Pose.Pose.Position.X), msgStructs_pose);
     yPoints = cellfun(@(m) double(m.Pose.Pose.Position.Y), msgStructs_pose);
     figure;
-    plot(xPoints, yPoints, 'b');
+    plot(xPoints,yPoints,'b','LineWidth', 2);
     hold on;
 
     % Plot the sonar point cloud
@@ -30,11 +30,17 @@ function plot_trajectory_with_sonar()
     for i = 1:length(xPoints)
         rangePoints = rangePointsCell{i};
         for j = 1:length(sensorAngles)
-            sonarX(i,j) = xPoints(i) + rangePoints(j) * cosd(sensorAngles(j));
-            sonarY(i,j) = yPoints(i) + rangePoints(j) * sind(sensorAngles(j));
-        end
+            if rangePoints(j) < 5
+                sonarX(i,j) = xPoints(i) + rangePoints(j) * cosd(sensorAngles(j));
+                sonarY(i,j) = yPoints(i) + rangePoints(j) * sind(sensorAngles(j));
+            else
+                sonarX(i,j) = NaN;  
+                sonarY(i,j) = NaN;
+            end
+        end    
     end
-    scatter(sonarX(:), sonarY(:), 'r', 'filled');
+    sonarPlot = scatter(sonarX(:), sonarY(:), 'r', 'filled');
+    sonarPlot.SizeData = 5; % to adjust the points thickness
 
     xlabel('X');
     ylabel('Y');
