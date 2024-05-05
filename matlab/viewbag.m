@@ -26,20 +26,27 @@ hold on;
 % plot the laser point cloud
 laserX = xPoints;
 laserY = yPoints;
-rangePointsCell = cellfun(@(m) double(m.Ranges),msgStructs_scan,'UniformOutput',false);
-laserAngles = [0, 40, 60, 80, 100, 120, 140, 180];
+rangePointsCell_laser = cellfun(@(m) double(m.Ranges),msgStructs_scan,'UniformOutput',false);
+start_angle = -30;
+increment_angle = 0.35156;
+num_samples = 726;
+laserAngles = linspace(start_angle, start_angle + increment_angle * (num_samples - 1), num_samples);
 for i = 1:length(xPoints)
-    rangePoints = rangePointsCell{i};
-    for j = 1:length(sensorAngles)
-        if rangePoints(j) < 5
-            sonarX(i,j) = xPoints(i) + rangePoints(j) * cosd(sensorAngles(j));
-            sonarY(i,j) = yPoints(i) + rangePoints(j) * sind(sensorAngles(j));
+    rangePoints_laser = rangePointsCell_laser{i};
+    for j = 1:length(laserAngles)
+        if rangePoints_laser(j) < 4
+            laserX(i,j) = xPoints(i) + rangePoints_laser(j) * cosd(laserAngles(j));
+            laserY(i,j) = yPoints(i) + rangePoints_laser(j) * sind(laserAngles(j));
         else
-            sonarX(i,j) = NaN;  
-            sonarY(i,j) = NaN;
+            laserX(i,j) = NaN;  
+            laserY(i,j) = NaN;
         end
     end    
 end
+
+laserPlot = scatter(laserX(:), laserY(:), 'y', 'filled');
+laserPlot.SizeData = 1; % to adjust the points thickness
+hold on;
 
 
 % plot the sonar point cloud
@@ -51,7 +58,7 @@ for i = 1:length(xPoints)
     rangePoints = rangePointsCell{i};
     for j = 1:length(sensorAngles)
         if rangePoints(j) < 5
-            sonarX(i,j) = xPoints(i) + rangePoints(j) * cosd(sensorAngles(j));
+            sonarX(i,j) = xPoints(i) + rangePoints(j) * cosd(180-sensorAngles(j));
             sonarY(i,j) = yPoints(i) + rangePoints(j) * sind(sensorAngles(j));
         else
             sonarX(i,j) = NaN;  
@@ -66,5 +73,5 @@ sonarPlot.SizeData = 5; % to adjust the points thickness
 % set plot labels
 xlabel('X');
 ylabel('Y');
-legend('Robot Trajectory', 'Sonar Point Cloud');
+legend('Robot Trajectory', 'Laser Point Cloud','Sonar Point Cloud');
 
