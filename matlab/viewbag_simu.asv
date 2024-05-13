@@ -5,7 +5,7 @@ path = fullfile(directory, bagname);
 bag = rosbag(path);
 
 % select topics from bag
-bSel_pose = select(bag,'Topic','/pose');
+bSel_pose = select(bag,'Topic','/p3dx/pose');
 bSel_scan = select(bag,'Topic','/scan');
 bSel_sonar = select(bag,'Topic','/sonar');
 bSel_tf = select(bag,'Topic','/tf');

@@ -5,8 +5,8 @@ path = fullfile(directory, bagname);
 bag = rosbag(path);
 
 % select topics from bag
-bSel_pose = select(bag,'Topic','/pose');
-bSel_scan = select(bag,'Topic','/scan');
+bSel_pose = select(bag,'Topic','/p3dx/odom');
+bSel_scan = select(bag,'Topic','/p3dx/laser/scan');
 bSel_sonar = select(bag,'Topic','/sonar');
 bSel_tf = select(bag,'Topic','/tf');
 
@@ -24,7 +24,7 @@ if Mode == 0
     xPoints = cellfun(@(m) double(m.Pose.Pose.Position.X),msgStructs_pose);
     yPoints = cellfun(@(m) double(m.Pose.Pose.Position.Y),msgStructs_pose);
     plot(xPoints,yPoints,'b','LineWidth', 2);
-    hold on;
+    % hold on;
     
     % plot the laser point cloud
     laserX = xPoints;
@@ -123,26 +123,31 @@ elseif Mode == 1
         laserPlot.SizeData = 10; % to adjust the points thickness
         hold on;
     
-        
-        % plot the sonar point cloud
-        sonarX = xInstant;
-        sonarY = yInstant;
-        rangePointsCell = cellfun(@(m) double(m.Ranges),msgStructs_sonar,'UniformOutput',false);
-        sensorAngles = [0, 40, 60, 80, 100, 120, 140, 180];
-        rangePoints = rangePointsCell{instant};
-        for j = 1:length(sensorAngles)
-                sonarX(j) = xInstant + rangePoints(j) * cosd(180-sensorAngles(j));
-                sonarY(j) = yInstant + rangePoints(j) * sind(sensorAngles(j));
-        end
-        
-        sonarPlot = scatter(sonarX, sonarY, 'r', 'filled');
-        sonarPlot.SizeData = 10; % to adjust the points thickness
-        
-        % set plot labels
-        xlabel('X');
-        ylabel('Y');
-        legend('Robot`s Location', 'Laser Point Cloud','Sonar Point Cloud');
-    
+        sonar_off = 1;
+
+       if sonar_off == 0     
+            % plot the sonar point cloud
+            sonarX = xInstant;
+            sonarY = yInstant;
+            rangePointsCell = cellfun(@(m) double(m.Ranges),msgStructs_sonar,'UniformOutput',false);
+            sensorAngles = [0, 40, 60, 80, 100, 120, 140, 180];
+            rangePoints = rangePointsCell{instant};
+            for j = 1:length(sensorAngles)
+                    sonarX(j) = xInstant + rangePoints(j) * cosd(180-sensorAngles(j));
+                    sonarY(j) = yInstant + rangePoints(j) * sind(sensorAngles(j));
+            end
+            
+            sonarPlot = scatter(sonarX, sonarY, 'r', 'filled');
+            sonarPlot.SizeData = 10; % to adjust the points thickness
+            
+            % set plot labels
+            xlabel('X');
+            ylabel('Y');
+            legend('Robot`s Location', 'Laser Point Cloud','Sonar Point Cloud');
+       end
+       
+       clear;
+
     end
 
 end
