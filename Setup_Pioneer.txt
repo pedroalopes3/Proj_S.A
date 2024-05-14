@@ -1,0 +1,36 @@
+1.	terminator
+
+1 º Terminal:
+
+     1.		ssh pi@192.168.28.[17...23]
+     2.		roscore 
+
+2º terminal:
+     1.		ssh pi@192.168.28.[17...23]
+     2.		rosrun p2os_driver p2os_driver _port:="/dev/ttyUSB0" _use_sonar:="true"
+
+3º terminal:
+     1.		ssh pi@192.168.28.[17...23]
+     2.		rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+
+Ligar o Hokuyo	
+
+4º terminal: 
+     1.         ssh pi@192.168.28.[17...23]
+     2.         rosrun urg_node urg_node /dev/ttyACM0
+
+Correr Rviz
+5º terminal:
+
+    1.		export ROS_MASTER_URI=http://192.168.28.[17...23]:11311 [Pioneer/RPi IP] 
+    2.	        export ROS_HOSTNAME=192.168.[27/28].XXX [Lab computer IP/Laptop]
+    3.		export ROS_IP=192.168.[27/28].XXX [Lab computer IP/Laptop]
+    4. 	        rosrun rviz rviz
+
+Fazer record do bag
+6º terminal:
+    1.		export ROS_MASTER_URI=http://192.168.28.[17...23]:11311 [Pioneer/RPi IP] 
+    2.	        export ROS_HOSTNAME=192.168.[27/28].XXX [Lab computer IP/Laptop]
+    3.	        export ROS_IP=192.168.[27/28].XXX [Lab computer IP/Laptop]
+    4.		rosbag record -a
+   
